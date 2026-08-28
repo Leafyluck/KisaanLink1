@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisaanLink | Farmer Portal</title>
+<style>
+:root{
+  --bg:#f5f8f3;--card:#fff;--text:#183020;--muted:#66756a;
+  --green:#2f8f46;--green-dark:#216d34;--green-soft:#e8f5e9;
+  --border:#dce6dc;--danger:#b93838;--shadow:0 5px 20px rgba(31,55,35,.08);
+}
+[data-theme="dark"]{
+  --bg:#0d1711;--card:#16231a;--text:#eef8ef;--muted:#a8b8aa;
+  --green:#5dcc76;--green-dark:#8be19b;--green-soft:#1b3823;
+  --border:#294332;--danger:#ff7777;--shadow:0 5px 20px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{min-height:100vh}
+.header{height:70px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;color:var(--green)}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:var(--green-soft);display:grid;place-items:center;font-size:22px}
+.header-actions{display:flex;gap:9px;align-items:center}
+.small-btn{border:1px solid var(--border);background:var(--card);color:var(--text);padding:9px 12px;border-radius:9px}
+.shell{display:flex;max-width:1250px;margin:auto}
+.sidebar{width:220px;padding:20px 12px;flex-shrink:0}
+.nav{display:grid;gap:6px}
+.nav button{border:0;background:transparent;color:var(--muted);text-align:left;padding:13px;border-radius:10px}
+.nav button.active,.nav button:hover{background:var(--green-soft);color:var(--green-dark);font-weight:700}
+.main{padding:25px 20px 50px;flex:1;min-width:0}
+.welcome{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}
+.welcome h1{font-size:27px;margin:0 0 5px}
+.welcome p{margin:0;color:var(--muted);font-size:14px}
+.badge{display:inline-block;background:var(--green-soft);color:var(--green-dark);border-radius:20px;padding:7px 10px;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.card h2{font-size:17px;margin:0 0 7px}.card h3{font-size:16px;margin:0 0 7px}
+.card p{font-size:13px;line-height:1.55;color:var(--muted);margin:5px 0}
+.big-icon{font-size:34px;margin-bottom:10px}
+.primary{background:var(--green);color:white;border:0;border-radius:9px;padding:11px 16px;font-weight:700}
+.primary:hover{background:var(--green-dark)}
+.outline{background:transparent;color:var(--green-dark);border:1px solid var(--green);border-radius:9px;padding:10px 14px;font-weight:700}
+.section{display:none}.section.active{display:block}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:var(--bg)}
+.auth{width:min(480px,100%);background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
+.auth h1{margin:0 0 8px}.auth-sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;outline:0}
+.field input:focus,.field select:focus{border-color:var(--green)}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap}
+.notice{padding:11px;border-radius:9px;font-size:12px;margin:12px 0;background:var(--green-soft)}
+.error{background:#fff0f0;color:var(--danger)}
+.success{color:var(--green-dark)}
+.hero{background:linear-gradient(135deg,var(--green),#65b86f);color:white;border-radius:16px;padding:22px;margin-bottom:15px}
+.hero p{color:#f0fff2}.hero .badge{background:rgba(255,255,255,.2);color:white}
+.kpi{font-size:25px;font-weight:800;margin-top:7px}
+.forecast-form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.forecast-form .full{grid-column:1/-1}
+.result{margin-top:16px;border-left:5px solid var(--green);background:var(--green-soft);padding:16px;border-radius:10px}
+.result strong{font-size:19px}
+.simple-list{display:grid;gap:9px;margin-top:12px}
+.simple-item{padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+.simple-item b{display:block;margin-bottom:3px}.simple-item span{font-size:12px;color:var(--muted)}
+.language-note{font-size:11px;color:var(--muted);margin-top:14px;text-align:center}
+@media(max-width:850px){
+ .sidebar{width:100%;padding:10px 12px}.shell{display:block}.nav{grid-template-columns:repeat(4,1fr)}.nav button{text-align:center;font-size:11px}.main{padding-top:10px}.grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+ .header{padding:0 12px}.header .name{display:none}.nav{grid-template-columns:repeat(2,1fr)}.grid,.forecast-form{grid-template-columns:1fr}.welcome{align-items:flex-start;flex-direction:column}.forecast-form .full{grid-column:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="authView" class="auth-wrap">
+  <div class="auth">
+    <div class="logo"><div class="logo-icon">🌾</div>KisaanLink</div>
+    <h1 style="margin-top:22px">Welcome, Farmer</h1>
+    <div class="auth-sub">A simple digital platform for farmers, buyers and better crop decisions.</div>
+
+    <div id="authNotice" class="notice hidden"></div>
+
+    <div id="loginBox">
+      <div class="field">
+        <label>Mobile number or email</label>
+        <input id="loginIdentifier" placeholder="Enter your mobile or email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPassword" type="password" placeholder="Enter your password">
+      </div>
+      <button class="primary" style="width:100%" onclick="login()">Log in</button>
+      <button class="outline" style="width:100%;margin-top:9px" onclick="toggleAuth('register')">New farmer? Create account</button>
+    </div>
+
+    <div id="registerBox" class="hidden">
+      <div class="field"><label>Your name</label><input id="regName" placeholder="e.g. Ramesh Kumar"></div>
+      <div class="field"><label>Mobile number</label><input id="regPhone" placeholder="10-digit mobile number"></div>
+      <div class="field"><label>Email <span style="font-weight:400">(optional, but needed for verification)</span></label><input id="regEmail" type="email" placeholder="name@example.com"></div>
+      <div class="field"><label>Password</label><input id="regPassword" type="password" placeholder="At least 6 characters"></div>
+      <div class="form-actions">
+        <button class="outline" onclick="sendVerification()">1. Verify email</button>
+        <button class="primary" onclick="register()">2. Create account</button>
+      </div>
+      <button class="outline" style="width:100%;margin-top:10px" onclick="toggleAuth('login')">I already have an account</button>
+      <div class="language-note">Designed with large buttons and simple steps for first-time digital users.</div>
+    </div>
+  </div>
+</div>
+
+<div id="appView" class="app hidden">
+  <header class="header">
+    <div class="logo"><div class="logo-icon">🌾</div><span class="name">KisaanLink</span></div>
+    <div class="header-actions">
+      <button class="small-btn" onclick="toggleTheme()" title="Change appearance">☀️ / 🌙</button>
+      <span id="userName" class="name" style="font-size:13px;font-weight:700"></span>
+      <button class="small-btn" onclick="logout()">Log out</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="nav">
+        <button class="active" onclick="showSection('home',this)">🏠 Home</button>
+        <button onclick="showSection('sell',this)">🧺 Sell Crop</button>
+        <button onclick="showSection('forecast',this)">🌤️ Crop Advice</button>
+        <button onclick="showSection('help',this)">❓ Help</button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <section id="home" class="section active">
+        <div class="welcome">
+          <div><h1>Namaste, <span id="welcomeName">Farmer</span> 👋</h1><p>Here are the most useful things you can do today.</p></div>
+          <span class="badge">● Account active</span>
+        </div>
+
+        <div class="hero">
+          <div class="badge">AI FARM ADVISOR</div>
+          <h2 style="margin:12px 0 5px">Make a better crop decision</h2>
+          <p>Check expected demand before deciding how much to send to market.</p>
+          <button class="small-btn" onclick="showSection('forecast')">Check demand →</button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="big-icon">🧺</div>
+            <h3>Sell your crop</h3>
+            <p>Record your harvest details so buyers can see what you have available.</p>
+            <button class="primary" onclick="showSection('sell')">List my crop</button>
+          </div>
+          <div class="card">
+            <div class="big-icon">📈</div>
+            <h3>Check market demand</h3>
+            <p>Get an AI estimate for Potato, Tomato or Onion in different regions.</p>
+            <button class="primary" onclick="showSection('forecast')">Get advice</button>
+          </div>
+          <div class="card">
+            <div class="big-icon">🤝</div>
+            <h3>Farmer support</h3>
+            <p>Use KisaanLink to connect with the wider marketplace as the platform grows.</p>
+            <button class="outline" onclick="showSection('help')">Learn more</button>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:15px">
+          <div class="card"><div style="font-size:12px;color:var(--muted)">Crops supported by AI</div><div class="kpi">3</div><p>Potato · Tomato · Onion</p></div>
+          <div class="card"><div style="font-size:12px;color:var(--muted)">Forecast confidence</div><div class="kpi">94.8%</div><p>Demo model confidence score</p></div>
+          <div class="card"><div style="font-size:12px;color:var(--muted)">Forecast window</div><div class="kpi">1–30</div><p>Days ahead</p></div>
+        </div>
+      </section>
+
+      <section id="sell" class="section">
+        <div class="welcome"><div><h1>🧺 Sell your crop</h1><p>Enter only the information you know. You can update it later.</p></div></div>
+        <div class="card">
+          <div class="notice">This screen is ready for the marketplace API. Your current backend does not yet contain a crop-listing endpoint, so the form below is a simple front-end prototype.</div>
+          <div class="forecast-form">
+            <div class="field"><label>Crop name</label><input placeholder="e.g. Tomato"></div>
+            <div class="field"><label>Quantity (kg)</label><input type="number" placeholder="e.g. 100"></div>
+            <div class="field"><label>Your price per kg (₹)</label><input type="number" placeholder="e.g. 25"></div>
+            <div class="field"><label>Village / district</label><input placeholder="e.g. Villupuram"></div>
+            <div class="full"><button class="primary" onclick="demoSave()">Save crop listing</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="forecast" class="section">
+        <div class="welcome"><div><h1>🌤️ Crop Advice</h1><p>Answer a few simple questions. KisaanLink will estimate future demand.</p></div></div>
+        <div class="card">
+          <div class="forecast-form">
+            <div class="field"><label>What crop?</label><select id="crop"><option>Potato</option><option>Tomato</option><option>Onion</option></select></div>
+            <div class="field"><label>Where will you sell?</label><select id="region"><option>North Zone</option><option>South Zone</option><option>West Zone</option><option>East Zone</option></select></div>
+            <div class="field"><label>How many days ahead?</label><input id="days" type="number" min="1" max="30" value="7"></div>
+            <div class="field"><label>Current supply (tons)</label><input id="supply" type="number" min="0" value="35"></div>
+            <div class="field"><label>Expected temperature (°C)</label><input id="temperature" type="number" value="28"></div>
+            <div class="field"><label>Price trend index</label><input id="priceTrend" type="number" step="0.01" value="1.05"></div>
+            <div class="full"><button class="primary" onclick="getForecast()">Get my crop advice</button></div>
+          </div>
+          <div id="forecastResult" class="result hidden"></div>
+        </div>
+      </section>
+
+      <section id="help" class="section">
+        <div class="welcome"><div><h1>❓ Help</h1><p>Simple explanations for using KisaanLink.</p></div></div>
+        <div class="grid">
+          <div class="card"><h3>How do I sell?</h3><p>Choose <b>Sell Crop</b> and enter your crop, quantity, price and location. The full marketplace API can be connected next.</p></div>
+          <div class="card"><h3>What is Crop Advice?</h3><p>It uses the Random Forest model in your backend to estimate demand and identify a supply gap.</p></div>
+          <div class="card"><h3>Need another language?</h3><p>The UI is intentionally simple so a multilingual layer can be added later without changing the API.</p></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+let currentUser = JSON.parse(localStorage.getItem("kisaanUser") || "null");
+
+function setTheme(){
+  const theme = localStorage.getItem("kisaanTheme") || "light";
+  document.documentElement.dataset.theme = theme;
+}
+function toggleTheme(){
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("kisaanTheme", next);
+  setTheme();
+}
+setTheme();
+
+function showNotice(message, type=""){
+  const el=document.getElementById("authNotice");
+  el.textContent=message;
+  el.className="notice "+type;
+}
+function toggleAuth(mode){
+  document.getElementById("loginBox").classList.toggle("hidden", mode!=="login");
+  document.getElementById("registerBox").classList.toggle("hidden", mode!=="register");
+  document.getElementById("authNotice").classList.add("hidden");
+}
+
+async function api(path, options={}){
+  const res=await fetch(API_BASE+path,{
+    headers:{"Content-Type":"application/json",...(options.headers||{})},
+    ...options
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.detail || "Something went wrong.");
+  return data;
+}
+
+async function sendVerification(){
+  const email=document.getElementById("regEmail").value.trim();
+  if(!email){showNotice("Please enter your email first.","error");return}
+  try{
+    const data=await api("/api/send-verification-email",{method:"POST",body:JSON.stringify({email})});
+    showNotice(data.message+" Check your inbox.","success");
+  }catch(e){showNotice(e.message,"error")}
+}
+
+async function register(){
+  const name=document.getElementById("regName").value.trim();
+  const phone=document.getElementById("regPhone").value.trim();
+  const email=document.getElementById("regEmail").value.trim();
+  const password=document.getElementById("regPassword").value;
+  if(!name||!phone||!password){showNotice("Please fill in your name, mobile number and password.","error");return}
+  try{
+    const data=await api("/api/register",{method:"POST",body:JSON.stringify({
+      full_name:name,phone_number:phone,email:email||null,password,
+      role:"farmer",auth_method:"password"
+    })});
+    showNotice(data.message+" You can now log in.","success");
+    setTimeout(()=>toggleAuth("login"),900);
+  }catch(e){showNotice(e.message,"error")}
+}
+
+async function login(){
+  const identifier=document.getElementById("loginIdentifier").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  if(!identifier||!password){showNotice("Please enter your mobile/email and password.","error");return}
+  try{
+    const data=await api("/api/login",{method:"POST",body:JSON.stringify({identifier,password})});
+    currentUser=data.user;
+    localStorage.setItem("kisaanUser",JSON.stringify(currentUser));
+    openApp();
+  }catch(e){showNotice(e.message,"error")}
+}
+
+function openApp(){
+  if(!currentUser)return;
+  document.getElementById("authView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  document.getElementById("userName").textContent=currentUser.full_name;
+  document.getElementById("welcomeName").textContent=currentUser.full_name.split(" ")[0];
+}
+function logout(){
+  localStorage.removeItem("kisaanUser");currentUser=null;
+  document.getElementById("appView").classList.add("hidden");
+  document.getElementById("authView").classList.remove("hidden");
+  toggleAuth("login");
+}
+function showSection(id,btn){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  else{
+    const buttons=[...document.querySelectorAll(".nav button")];
+    const match=buttons.find(b=>b.getAttribute("onclick")?.includes("'"+id+"'"));
+    if(match)match.classList.add("active");
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+async function getForecast(){
+  if(!currentUser){logout();return}
+  const payload={
+    crop:document.getElementById("crop").value,
+    region:document.getElementById("region").value,
+    forecast_days_ahead:Number(document.getElementById("days").value),
+    temperature_c:Number(document.getElementById("temperature").value),
+    price_trend_index:Number(document.getElementById("priceTrend").value),
+    current_supply_tons:Number(document.getElementById("supply").value)
+  };
+  const result=document.getElementById("forecastResult");
+  result.classList.remove("hidden");
+  result.innerHTML="⏳ Calculating your crop advice...";
+  try{
+    const data=await api("/api/forecast/predict",{
+      method:"POST",
+      headers:{"user-id":currentUser.id},
+      body:JSON.stringify(payload)
+    });
+    const tone=data.recommendation_type==="high-demand"?"🟢":data.recommendation_type==="overstock"?"🟠":"🔵";
+    result.innerHTML=`
+      <strong>${tone} ${data.recommendation}</strong>
+      <div style="margin-top:9px;font-size:12px">
+        <b>${data.crop}</b> · ${data.region} · ${data.forecast_date}<br>
+        Projected demand: <b>${data.projected_demand_tons} tons</b><br>
+        Current supply: <b>${data.current_supply_tons} tons</b><br>
+        Supply gap: <b>${data.supply_gap_tons} tons</b><br>
+        Model confidence: <b>${data.confidence_score}%</b>
+      </div>`;
+  }catch(e){
+    result.innerHTML="❌ "+e.message;
+  }
+}
+function demoSave(){alert("Crop listing saved locally for this demo. Connect this button to a /api/listings endpoint when you add the marketplace database collection.")}
+if(currentUser)openApp();
+</script>
+</body>
+</html>

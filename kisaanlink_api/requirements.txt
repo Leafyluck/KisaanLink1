@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pymongo
+certifi
+passlib
+bcrypt
+pydantic[email]
+pandas
+numpy
+scikit-learn
